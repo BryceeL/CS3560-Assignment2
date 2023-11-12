@@ -18,11 +18,10 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 
 
 public class AdminPanel extends JFrame {
-	//components
+	//ui components
 	private JPanel leftPanel;
 	private JPanel leftUpPanel;
 	private JTree tree;
@@ -53,7 +52,7 @@ public class AdminPanel extends JFrame {
 	public AdminPanel() {
 		//frame
 		this.setTitle("Admin Panel");
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //close and ends when press x
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //close and ends when press x
 		this.setSize(800, 500); //set default size
 		this.setLocationRelativeTo(null); //window opens at center of screen
 		this.setResizable(false); //lock size
@@ -105,16 +104,25 @@ public class AdminPanel extends JFrame {
 		createStatSection();
 	}
 	
-	//-----------creates tree and label on right of frame-----------
+	//-----------creates tree and label on left of frame-----------
 	private void createTree() {
 		JLabel label = new JLabel("Tree View");
 		label.setFont(new Font("Arial", Font.BOLD, 24));
 		label.setForeground(Color.BLACK);
 		leftUpPanel.add(label);
 		
+		
 		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode("Root");
 		tree = new JTree(RootNode);
 		tree.setPreferredSize(new Dimension(300,400));
+		
+		//--DEBUG!!!!
+		User user = new User("Trey");
+		userList.add(user);
+		DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user.getUsername());
+		RootNode.add(userNode);
+		
+		
 		
 		//respond to selected node
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -129,7 +137,7 @@ public class AdminPanel extends JFrame {
 			}
 			
 		});
-		
+
 		leftPanel.add(tree);
 	}
 	
@@ -150,17 +158,21 @@ public class AdminPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(selectedNode != null)
 				{
-					User user = new User(userIdText.getText());
-					userList.add(user);
-					DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user.getUsername());
-					selectedNode.add(userNode);
-					((DefaultTreeModel) tree.getModel()).reload();
+					if(!userIdText.getText().trim().equals(""))
+					{
+						User user = new User(userIdText.getText());
+						userList.add(user);
+						DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user.getUsername());
+						selectedNode.add(userNode);
+						((DefaultTreeModel) tree.getModel()).reload();
+					}
+					else
+						JOptionPane.showMessageDialog(null, "Please fill in the username field", 
+								"Username Field Empty", JOptionPane.WARNING_MESSAGE);
 				}
 				else
-				{
 					JOptionPane.showMessageDialog(null, "Please select a node to add user "+ 
-										userIdText.getText(), "Error: No selected Node", JOptionPane.WARNING_MESSAGE);
-				}
+							userIdText.getText(), "No selected Node", JOptionPane.WARNING_MESSAGE);
 			}
 		});
 		rightUpPanel.add(userIdBtn);
@@ -193,19 +205,22 @@ public class AdminPanel extends JFrame {
 		openUserBtn.setFont(new Font("Arial", Font.BOLD, 18));
 		openUserBtn.setPreferredSize(new Dimension(250, 50));
 		
+		//open user panel for a particular user
 		openUserBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String nodeData = (String) selectedNode.getUserObject();
-				System.out.println("obj: " + nodeData);
-				for(User user : userList)
+				if(selectedNode != null)
 				{
-					if(user.getUsername().equals(nodeData))
+					String nodeData = (String) selectedNode.getUserObject();
+					for(User user : userList)
 					{
-						System.out.print(user + " exists!");
-						UserPanel userframe = new UserPanel(user);
+						if(user.getUsername().equals(nodeData))
+						{
+							UserPanel userframe = new UserPanel(user);
+							return;
+						}
 					}
 				}
-				
+				JOptionPane.showMessageDialog(null, "Please select a valid user node from the tree", "Invalid Node", JOptionPane.ERROR_MESSAGE);
 			
 			}
 			
@@ -213,15 +228,6 @@ public class AdminPanel extends JFrame {
 		
 		rightMidPanel.add(openUserBtn);
 	}
-	
-	 private User getSelectedCustomNode() {
-	        TreePath selectionPath = tree.getSelectionPath();
-	        if (selectionPath != null) {
-	            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
-	            return (User) selectedNode.getUserObject();
-	        }
-	        return null;
-	    }
 	
 	//-----------create buttons to view statistics on right bottom of frame-----------
 	private void createStatSection() {
