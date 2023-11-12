@@ -3,14 +3,23 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+
 
 public class AdminPanel extends JFrame {
 	//components
@@ -34,6 +43,10 @@ public class AdminPanel extends JFrame {
 	private JButton totalGroupsBtn;
 	private JButton totalMsgsBtn;
 	private JButton postivePercentBtn;
+	
+	//vars
+	private DefaultMutableTreeNode selectedNode;
+	private ArrayList<User> userList = new ArrayList<>();
 	
 	
 	
@@ -81,7 +94,7 @@ public class AdminPanel extends JFrame {
 		rightMidPanel.setPreferredSize(rightPanelSize);
 		rightPanel.add(rightMidPanel);
 		
-		createUserViewBtn();
+		createUserViewSection();
 		
 		//right bottom Panel
 		rightBtmPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
@@ -92,6 +105,7 @@ public class AdminPanel extends JFrame {
 		createStatSection();
 	}
 	
+	//-----------creates tree and label on right of frame-----------
 	private void createTree() {
 		JLabel label = new JLabel("Tree View");
 		label.setFont(new Font("Arial", Font.BOLD, 24));
@@ -101,9 +115,25 @@ public class AdminPanel extends JFrame {
 		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode("Root");
 		tree = new JTree(RootNode);
 		tree.setPreferredSize(new Dimension(300,400));
+		
+		//respond to selected node
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+
+			public void valueChanged(TreeSelectionEvent e) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+				if(node != null) {
+					Object nodeData = node.getUserObject(); //gets selected node's object data
+					selectedNode = node;
+					System.out.println("Selected: " + selectedNode);
+				}
+			}
+			
+		});
+		
 		leftPanel.add(tree);
 	}
 	
+	//-----------creates textfields and submit buttons on top right of frame-----------
 	private void createIdSection() {
 		Dimension btnSize = new Dimension(120, 30);
 		
@@ -114,6 +144,25 @@ public class AdminPanel extends JFrame {
 		userIdBtn = new JButton("Add User");
 		userIdBtn.setFont(new Font("Arial", Font.BOLD, 14));
 		userIdBtn.setPreferredSize(btnSize);
+		
+		//add user under selected node (MAKE IT SO IT CAN ONLY BE ADD TO NODE THAT HAS ROOT PARENT)
+		userIdBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(selectedNode != null)
+				{
+					User user = new User(userIdText.getText());
+					userList.add(user);
+					DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user.getUsername());
+					selectedNode.add(userNode);
+					((DefaultTreeModel) tree.getModel()).reload();
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Please select a node to add user "+ 
+										userIdText.getText(), "Error: No selected Node", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
 		rightUpPanel.add(userIdBtn);
 		
 		groupIdText = new JTextField(12);
@@ -123,24 +172,78 @@ public class AdminPanel extends JFrame {
 		groupIdBtn = new JButton("Add Group");
 		groupIdBtn.setFont(new Font("Arial", Font.BOLD, 14));
 		groupIdBtn.setPreferredSize(btnSize);
+		
+		//adds group to tree (SHOULD ONLY BE UNDER ROOT!)
+		groupIdBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode(groupIdText.getText());		
+				DefaultMutableTreeNode rootOfTree = (DefaultMutableTreeNode) tree.getModel().getRoot();
+				rootOfTree.add(groupNode);
+				((DefaultTreeModel) tree.getModel()).reload();
+			}
+			
+		});
+		
 		rightUpPanel.add(groupIdBtn);
 	}
 	
-	private void createUserViewBtn() {
+	//-----------creates button to view user on right middle of frame-----------
+	private void createUserViewSection() {
 		openUserBtn = new JButton("Open User View");
 		openUserBtn.setFont(new Font("Arial", Font.BOLD, 18));
 		openUserBtn.setPreferredSize(new Dimension(250, 50));
+		
+		openUserBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String nodeData = (String) selectedNode.getUserObject();
+				System.out.println("obj: " + nodeData);
+				for(User user : userList)
+				{
+					if(user.getUsername().equals(nodeData))
+					{
+						System.out.print(user + " exists!");
+						UserPanel userframe = new UserPanel(user);
+					}
+				}
+				
+			
+			}
+			
+		});
+		
 		rightMidPanel.add(openUserBtn);
 	}
 	
+	 private User getSelectedCustomNode() {
+	        TreePath selectionPath = tree.getSelectionPath();
+	        if (selectionPath != null) {
+	            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+	            return (User) selectedNode.getUserObject();
+	        }
+	        return null;
+	    }
+	
+	//-----------create buttons to view statistics on right bottom of frame-----------
 	private void createStatSection() {
 		Dimension btnSize = new Dimension(160, 40);
 		totalUsersBtn = new JButton("Show Total Users");
 		totalUsersBtn.setPreferredSize(btnSize);
+		//display total users
+		totalUsersBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Total Users:" + null, "Total Users", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		rightBtmPanel.add(totalUsersBtn);
 		
 		totalGroupsBtn = new JButton("Show Total Groups");
 		totalGroupsBtn.setPreferredSize(btnSize);
+		//display total groups
+		totalGroupsBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Total Groups:" + null, "Total Groups", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		rightBtmPanel.add(totalGroupsBtn);
 		
 		totalMsgsBtn = new JButton("<html>Show Total<br>Messages</html>");
