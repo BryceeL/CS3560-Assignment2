@@ -4,11 +4,12 @@ public interface UserInterface {
 
 	public String getUsername();
 	
-	public ArrayList<User> getFollowedUsers();
-	
 	public ArrayList<String> getTweetFeed();
 	
-	public void followUser(User Id);
+	public boolean followUser(String username);
 	
 	public void postTweet(String tweet);
+	
+	//observer
+	public void update(Subject subject);
 }
