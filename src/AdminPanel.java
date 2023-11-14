@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
@@ -109,31 +110,32 @@ public class AdminPanel extends JFrame {
 		
 		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode("Root");
 		tree = new JTree(RootNode);
-		tree.setPreferredSize(new Dimension(300,400));
+		//tree.setPreferredSize(new Dimension(300,400));
 		
 		//--DEBUG!!!!
+		DefaultMutableTreeNode group = new DefaultMutableTreeNode("GROUP:Brothers");
+		RootNode.add(group);
 		User Auser = new User("Trey");
 		DefaultMutableTreeNode AuserNode = new DefaultMutableTreeNode(Auser.getUsername());
-		RootNode.add(AuserNode);
+		group.add(AuserNode);
 		User Buser = new User("Bryce");
 		DefaultMutableTreeNode BuserNode = new DefaultMutableTreeNode(Buser.getUsername());
-		RootNode.add(BuserNode);
+		group.add(BuserNode);
 		
 		//respond to selected node
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
-
 			public void valueChanged(TreeSelectionEvent e) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 				if(node != null) {
-					Object nodeData = node.getUserObject(); //gets selected node's object data
 					selectedNode = node;
-					System.out.println("Selected: " + selectedNode);
+					System.out.println("Selected Node: " + selectedNode);
 				}
 			}
 			
 		});
-
-		leftPanel.add(tree);
+		JScrollPane scroll = new JScrollPane(tree);
+		scroll.setPreferredSize(new Dimension(300,400));
+		leftPanel.add(scroll);
 	}
 	
 	//-----------creates textfields and submit buttons on top right of frame-----------
@@ -149,23 +151,32 @@ public class AdminPanel extends JFrame {
 		JButton userIdBtn = new JButton("Add User");
 		userIdBtn.setFont(new Font("Arial", Font.BOLD, 14));
 		userIdBtn.setPreferredSize(btnSize);
-		//add user under selected node (MAKE IT SO IT CAN ONLY BE ADD TO GROUP NODE)
+		//add user under selected node
 		userIdBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(selectedNode != null) {//&& it is added to group && user doesn't already exist
-					if(!userIdText.getText().trim().equals("")) {
-						User user = new User(userIdText.getText());
-						DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user.getUsername());
-						selectedNode.add(userNode);
-						userIdText.setText("");
-						((DefaultTreeModel) tree.getModel()).reload();
+				//no selected node
+				if(selectedNode != null) {
+					//node is group
+					if(selectedNode.getUserObject().toString().contains("GROUP:")) {
+						String userInput = userIdText.getText().trim();
+						//text field cannot be blank or adding an existing user
+						if(!userInput.equals("") && MessageService.getInstance().getUser(userInput) == null) {
+							User user = new User(userIdText.getText());
+							DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user.getUsername());
+							selectedNode.add(userNode);
+							userIdText.setText("");
+							((DefaultTreeModel) tree.getModel()).reload();
+						} else {
+							JOptionPane.showMessageDialog(null, "Invalid Username Field", 
+									"Error with Username Field", JOptionPane.ERROR_MESSAGE);
+						}
 					} else {
-						JOptionPane.showMessageDialog(null, "Please fill in the username field", 
-								"Username Field Empty", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Users can only be added under groups", 
+								"Error with node", JOptionPane.WARNING_MESSAGE);
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Please select a node to add user "+ 
-							userIdText.getText(), "No selected Node", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Please select a node", 
+							"Error with node", JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -183,13 +194,30 @@ public class AdminPanel extends JFrame {
 		//adds group to tree under the root
 		groupIdBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Group group = new Group(groupIdText.getText());
-				Group.add(group);
-				DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode("GROUP: " + group.getName());		
-				DefaultMutableTreeNode rootOfTree = (DefaultMutableTreeNode) tree.getModel().getRoot();
-				rootOfTree.add(groupNode);
-				groupIdText.setText("");
-				((DefaultTreeModel) tree.getModel()).reload();
+				
+				//add group that is under Root or another group
+				if(selectedNode != null) {
+					if(selectedNode.getUserObject().toString().contains("GROUP:") || 
+							selectedNode.getUserObject().toString().equals("Root")) {
+						if(!groupIdText.getText().trim().equals("")) {
+							DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode("GROUP: " + groupIdText.getText());		
+							selectedNode.add(groupNode);
+							groupIdText.setText("");
+							((DefaultTreeModel) tree.getModel()).reload();
+						} else {
+							JOptionPane.showMessageDialog(null, "Invalid Group Field", 
+									"Error with Group Field", JOptionPane.ERROR_MESSAGE);
+						}	
+					} else {
+						JOptionPane.showMessageDialog(null, "Groups can only be added under 'Root' or other groups", 
+								"Error with node", JOptionPane.WARNING_MESSAGE);
+					}
+					
+				} else {
+					JOptionPane.showMessageDialog(null, "Please select a node", 
+							"Error with node", JOptionPane.WARNING_MESSAGE);
+				}
+				
 			}
 		});
 		rightUpPanel.add(groupIdBtn);
@@ -215,7 +243,6 @@ public class AdminPanel extends JFrame {
 				}
 				JOptionPane.showMessageDialog(null, "Please select a valid user node from the tree",
 											"Invalid Node", JOptionPane.ERROR_MESSAGE);
-			
 			}
 			
 		});

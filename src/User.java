@@ -6,12 +6,6 @@ public class User extends Subject implements UserInterface {
 	
 	private ArrayList<String> newsFeed = new ArrayList<String>();
 	
-//	private ArrayList<User> followedUsers = new ArrayList<User>(); //others that this user follow
-//	private ArrayList<User> followingUsers = new ArrayList<User>(); //others following this user
-	
-//	private static ArrayList<User> allUsersList = new ArrayList<User>();
-	
-	
 	public User(String userName) {
 		this.userName = userName;
 		User.addUser(this);
@@ -35,7 +29,6 @@ public class User extends Subject implements UserInterface {
 			return false;
 		} else {	
 			desiredUser.attach(this);
-			System.out.println(desiredUser.getFollowers()); 
 			return true;
 		}
 	}
