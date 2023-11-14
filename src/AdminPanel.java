@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -43,16 +42,13 @@ public class AdminPanel extends JFrame {
 //	private JButton totalMsgsBtn;
 //	private JButton postivePercentBtn;
 	
-	//vars
+	//variables
 	private DefaultMutableTreeNode selectedNode;
-	private ArrayList<User> userList = new ArrayList<>();
-	
-	
 	
 	public AdminPanel() {
 		//frame
 		this.setTitle("Admin Panel");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //close and ends when press x
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //terminate execution on x
 		this.setSize(800, 500); //set default size
 		this.setLocationRelativeTo(null); //window opens at center of screen
 		this.setResizable(false); //lock size
@@ -79,7 +75,7 @@ public class AdminPanel extends JFrame {
 		this.add(rightPanel, BorderLayout.EAST);
 		
 		Dimension rightPanelSize = new Dimension(400, 140);
-		//right up Panel
+		//right UP Panel
 		rightUpPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
 		rightUpPanel.setBackground(Color.GRAY);
 		rightUpPanel.setPreferredSize(rightPanelSize);
@@ -87,7 +83,7 @@ public class AdminPanel extends JFrame {
 		
 		createIdSection();
 		
-		//right mid Panel
+		//right MID Panel
 		rightMidPanel = new JPanel();
 		rightMidPanel.setBackground(Color.GRAY);
 		rightMidPanel.setPreferredSize(rightPanelSize);
@@ -95,7 +91,7 @@ public class AdminPanel extends JFrame {
 		
 		createUserViewSection();
 		
-		//right bottom Panel
+		//right BOTTOM Panel
 		rightBtmPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
 		rightBtmPanel.setBackground(Color.GRAY);
 		rightBtmPanel.setPreferredSize(rightPanelSize);
@@ -104,7 +100,7 @@ public class AdminPanel extends JFrame {
 		createStatSection();
 	}
 	
-	//-----------creates tree and label on left of frame-----------
+	//-----------creates tree and its label on left of frame-----------
 	private void createTree() {
 		JLabel label = new JLabel("Tree View");
 		label.setFont(new Font("Arial", Font.BOLD, 24));
@@ -117,11 +113,9 @@ public class AdminPanel extends JFrame {
 		
 		//--DEBUG!!!!
 		User Auser = new User("Trey");
-		User.addUser(Auser);
 		DefaultMutableTreeNode AuserNode = new DefaultMutableTreeNode(Auser.getUsername());
 		RootNode.add(AuserNode);
 		User Buser = new User("Bryce");
-		User.addUser(Buser);
 		DefaultMutableTreeNode BuserNode = new DefaultMutableTreeNode(Buser.getUsername());
 		RootNode.add(BuserNode);
 		
@@ -146,46 +140,46 @@ public class AdminPanel extends JFrame {
 	private void createIdSection() {
 		Dimension btnSize = new Dimension(120, 30);
 		
+		//text field to input user
 		JTextField userIdText = new JTextField(12);
 		userIdText.setFont(new Font("Arial", Font.PLAIN, 20));
 		rightUpPanel.add(userIdText);
 		
+		//button to submit user
 		JButton userIdBtn = new JButton("Add User");
 		userIdBtn.setFont(new Font("Arial", Font.BOLD, 14));
 		userIdBtn.setPreferredSize(btnSize);
-		
 		//add user under selected node (MAKE IT SO IT CAN ONLY BE ADD TO GROUP NODE)
 		userIdBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(selectedNode != null) //&& it is added to group && user doesn't already exist
-				{
-					if(!userIdText.getText().trim().equals(""))
-					{
+				if(selectedNode != null) {//&& it is added to group && user doesn't already exist
+					if(!userIdText.getText().trim().equals("")) {
 						User user = new User(userIdText.getText());
-						User.addUser(user);
 						DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user.getUsername());
 						selectedNode.add(userNode);
+						userIdText.setText("");
 						((DefaultTreeModel) tree.getModel()).reload();
-					}
-					else
+					} else {
 						JOptionPane.showMessageDialog(null, "Please fill in the username field", 
 								"Username Field Empty", JOptionPane.WARNING_MESSAGE);
-				}
-				else
+					}
+				} else {
 					JOptionPane.showMessageDialog(null, "Please select a node to add user "+ 
 							userIdText.getText(), "No selected Node", JOptionPane.WARNING_MESSAGE);
+				}
 			}
 		});
 		rightUpPanel.add(userIdBtn);
 		
+		//text field to input group
 		JTextField groupIdText = new JTextField(12);
 		groupIdText.setFont(new Font("Arial", Font.PLAIN, 20));
 		rightUpPanel.add(groupIdText);
 		
+		//button to submit group
 		JButton groupIdBtn = new JButton("Add Group");
 		groupIdBtn.setFont(new Font("Arial", Font.BOLD, 14));
 		groupIdBtn.setPreferredSize(btnSize);
-		
 		//adds group to tree under the root
 		groupIdBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -194,11 +188,10 @@ public class AdminPanel extends JFrame {
 				DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode("GROUP: " + group.getName());		
 				DefaultMutableTreeNode rootOfTree = (DefaultMutableTreeNode) tree.getModel().getRoot();
 				rootOfTree.add(groupNode);
+				groupIdText.setText("");
 				((DefaultTreeModel) tree.getModel()).reload();
 			}
-			
 		});
-		
 		rightUpPanel.add(groupIdBtn);
 	}
 	
@@ -214,13 +207,10 @@ public class AdminPanel extends JFrame {
 				if(selectedNode != null)
 				{
 					String nodeData = (String) selectedNode.getUserObject();
-					for(User user : User.getUserList())
-					{
-						if(user.getUsername().equals(nodeData))
-						{
-							UserPanel userframe = new UserPanel(user);
-							return;
-						}
+					User user = MessageService.getInstance().getUser(nodeData);
+					if( user != null) {
+						UserPanel userframe = new UserPanel(user);
+						return;
 					}
 				}
 				JOptionPane.showMessageDialog(null, "Please select a valid user node from the tree",
@@ -242,8 +232,10 @@ public class AdminPanel extends JFrame {
 		totalUsersBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Total Users: " 
-						+ User.getUserList().size(), "Total Users", JOptionPane.INFORMATION_MESSAGE);
+						+ MessageService.getInstance().getUserSetSize(), "Total Users", JOptionPane.INFORMATION_MESSAGE);
 			}
+			
+			
 		});
 		rightBtmPanel.add(totalUsersBtn);
 		
