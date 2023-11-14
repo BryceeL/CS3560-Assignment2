@@ -86,6 +86,20 @@ public class UserPanel extends JFrame {
 		JScrollPane scroll = new JScrollPane(followUserList);
 		scroll.setPreferredSize(new Dimension(300,350));
 		leftPanel.add(scroll);
+		
+		//button to refresh news feed
+		JButton refreshBtn = new JButton("Refresh Followers");
+		refreshBtn.setPreferredSize(new Dimension(150, 20));
+		refreshBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				listModel.clear();
+				for(User follower : user.getFollowers()) {
+					listModel.addElement("- " + follower.getUsername());
+				}
+			}
+		});
+		leftPanel.add(refreshBtn);
 	}
 	
 	//-----------function post message and see list of posts sent from followings-----------
@@ -126,7 +140,25 @@ public class UserPanel extends JFrame {
 		scroll.setPreferredSize(new Dimension(300,350));
 		rightPanel.add(scroll);
 		
-		JLabel userLabel = new JLabel("("+user.toString()+")");
-		rightPanel.add(userLabel);
+//		JLabel userLabel = new JLabel("("+user.toString()+")");
+//		rightPanel.add(userLabel);
+		
+		//button to refresh news feed
+		JButton refreshBtn = new JButton("Refresh News Feed");
+		refreshBtn.setPreferredSize(new Dimension(150, 20));
+		refreshBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				listModel.clear();
+				for(String message : user.getNewsFeed()) {
+					listModel.addElement("- " + message);
+				}
+			}
+		});
+		rightPanel.add(refreshBtn);
+	}
+	
+	private void createNewsFeed() {
+		
 	}
 }

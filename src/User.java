@@ -56,7 +56,6 @@ public class User extends Subject implements UserInterface {
 			
 			//add message if it doesn't alr exist in feed or feed is empty
 			for(String msg : subMessages) {
-				System.out.println(newsFeed.indexOf(msg));
 				if(newsFeed.indexOf(subject.getUsername() + ": "+ msg) == -1 || newsFeed.size() == 0) { //PROBLEM, NOT CHECKING DUPLICATES??
 					newsFeed.add(subject.getUsername() + ": " + msg);
 					System.out.println(userName + " recieved " + subject.getUsername() + 
