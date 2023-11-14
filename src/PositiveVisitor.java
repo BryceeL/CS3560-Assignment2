@@ -2,7 +2,8 @@ import java.util.ArrayList;
 
 public class PositiveVisitor implements Visitor{
 	
-	private String[] positiveWords = {"cool", "nice", "awesome", "beautiful", "love"};
+	private String[] positiveWords = {"cool", "nice", "awesome", "beautiful",
+			"love", "good", "great", "excellent"};
 	MessagesVisitor totalMessages = new MessagesVisitor();
 	
 	public int visit(MessageService instance) {
