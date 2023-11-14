@@ -100,16 +100,6 @@ public class AdminPanel extends JFrame {
 		tree = new JTree(RootNode);
 		tree.setFont(new Font("Arial", Font.PLAIN, 16));
 		
-		//--DEBUG!!!!
-//		DefaultMutableTreeNode group = new DefaultMutableTreeNode(new Group("Brothers").getName());
-//		RootNode.add(group);
-//		User Auser = new User("Trey");
-//		DefaultMutableTreeNode AuserNode = new DefaultMutableTreeNode(Auser.getUsername());
-//		group.add(AuserNode);
-//		User Buser = new User("Bryce");
-//		DefaultMutableTreeNode BuserNode = new DefaultMutableTreeNode(Buser.getUsername());
-//		group.add(BuserNode);
-		
 		//respond to selected node
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
