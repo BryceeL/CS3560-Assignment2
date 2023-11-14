@@ -31,7 +31,7 @@ public class UserPanel extends JFrame {
 		//left panel
 		leftPanel = new JPanel();
 		leftPanel.setBackground(Color.LIGHT_GRAY);
-		leftPanel.setPreferredSize(new Dimension(360, 240));
+		leftPanel.setPreferredSize(new Dimension(370, 240));
 
 		this.add(leftPanel, BorderLayout.WEST);
 		
@@ -40,7 +40,7 @@ public class UserPanel extends JFrame {
 		//right panel
 		rightPanel = new JPanel();
 		rightPanel.setBackground(Color.LIGHT_GRAY);
-		rightPanel.setPreferredSize(new Dimension(360, 240));
+		rightPanel.setPreferredSize(new Dimension(370, 240));
 		this.add(rightPanel, BorderLayout.EAST);
 		
 		createRightSection(user);
@@ -156,9 +156,5 @@ public class UserPanel extends JFrame {
 			}
 		});
 		rightPanel.add(refreshBtn);
-	}
-	
-	private void createNewsFeed() {
-		
 	}
 }

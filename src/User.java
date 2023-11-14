@@ -8,7 +8,7 @@ public class User extends Subject implements UserInterface {
 	
 	public User(String userName) {
 		this.userName = userName;
-		User.addUser(this);
+		addUser(this);
 	}
 	
 	public String getUsername() {
@@ -23,7 +23,6 @@ public class User extends Subject implements UserInterface {
 	public boolean followUser(String username) {
 		//could not find user
 		User desiredUser = getUser(username);
-		
 		//false if desired user not found, alr following user, or following self
 		if(desiredUser == null || desiredUser.getFollowers().indexOf(this) != -1 || desiredUser.getUsername().equals(this.getUsername())) {
 			return false;
@@ -51,21 +50,19 @@ public class User extends Subject implements UserInterface {
 			for(String msg : subMessages) {
 				if(newsFeed.indexOf(subject.getUsername() + ": "+ msg) == -1 || newsFeed.size() == 0) { //PROBLEM, NOT CHECKING DUPLICATES??
 					newsFeed.add(subject.getUsername() + ": " + msg);
-					System.out.println(userName + " recieved " + subject.getUsername() + 
+					System.out.println(userName + " received " + subject.getUsername() + 
 							"'s message: " + msg);
 				}
 			}
 		}
 	}
-
-	//add user to static list
+	//add user to static list using instance of MessageService
 	public static void addUser(User user) {
 		MessageService.getInstance().addUser(user);
 	}
 	
-	//return user based on its string name
+	//return user based on its string name using instance of MessageService
 	private User getUser(String user) {
 		return MessageService.getInstance().getUser(user);
 	}
-	
 }

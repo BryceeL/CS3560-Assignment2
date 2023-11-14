@@ -113,7 +113,7 @@ public class AdminPanel extends JFrame {
 		//tree.setPreferredSize(new Dimension(300,400));
 		
 		//--DEBUG!!!!
-		DefaultMutableTreeNode group = new DefaultMutableTreeNode("GROUP:Brothers");
+		DefaultMutableTreeNode group = new DefaultMutableTreeNode(new Group("Brothers").getName());
 		RootNode.add(group);
 		User Auser = new User("Trey");
 		DefaultMutableTreeNode AuserNode = new DefaultMutableTreeNode(Auser.getUsername());
@@ -200,7 +200,7 @@ public class AdminPanel extends JFrame {
 					if(selectedNode.getUserObject().toString().contains("GROUP:") || 
 							selectedNode.getUserObject().toString().equals("Root")) {
 						if(!groupIdText.getText().trim().equals("")) {
-							DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode("GROUP: " + groupIdText.getText());		
+							DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode(new Group(groupIdText.getText()).getName());		
 							selectedNode.add(groupNode);
 							groupIdText.setText("");
 							((DefaultTreeModel) tree.getModel()).reload();
@@ -246,55 +246,63 @@ public class AdminPanel extends JFrame {
 			}
 			
 		});
-		
 		rightMidPanel.add(openUserBtn);
 	}
 	
 	//-----------create buttons to view statistics on right bottom of frame-----------
 	private void createStatSection() {
+		UsersVisitor totalUsers = new UsersVisitor();
+		GroupVisitor totalGroups = new GroupVisitor();
+		MessagesVisitor totalMessages = new MessagesVisitor();
+		PositiveVisitor positivePercentage = new PositiveVisitor();
+		
 		Dimension btnSize = new Dimension(160, 40);
+		
+		//total user button
 		JButton totalUsersBtn = new JButton("Show Total Users");
 		totalUsersBtn.setPreferredSize(btnSize);
 		//display total users
 		totalUsersBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Total Users: " 
-						+ MessageService.getInstance().getUserSetSize(), "Total Users", JOptionPane.INFORMATION_MESSAGE);
+						+ MessageService.getInstance().accept(totalUsers), "Total Users", JOptionPane.INFORMATION_MESSAGE);
 			}
-			
-			
 		});
 		rightBtmPanel.add(totalUsersBtn);
 		
+		//total groups button
 		JButton totalGroupsBtn = new JButton("Show Total Groups");
 		totalGroupsBtn.setPreferredSize(btnSize);
 		//display total groups
 		totalGroupsBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Total Groups: " 
-						+ Group.getGroups().size(), "Total Groups", JOptionPane.INFORMATION_MESSAGE);
+						+ MessageService.getInstance().accept(totalGroups), "Total Groups", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		rightBtmPanel.add(totalGroupsBtn);
 		
+		//total messages button
 		JButton totalMsgsBtn = new JButton("<html>Show Total<br>Messages</html>");
 		totalMsgsBtn.setPreferredSize(btnSize);
 		//display total messages
 		totalMsgsBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Total Messages: " 
-						+ null, "Total Messages", JOptionPane.INFORMATION_MESSAGE);
+						+ MessageService.getInstance().accept(totalMessages), "Total Messages", JOptionPane.INFORMATION_MESSAGE);
+				
 			}
 		});
 		rightBtmPanel.add(totalMsgsBtn);
 		
+		//percent button
 		JButton postivePercentBtn = new JButton("<html>Show Positve<br>Percentage</html>");
 		postivePercentBtn.setPreferredSize(btnSize);
 		//display positive percentage
 		postivePercentBtn.addActionListener(new ActionListener( ) {
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null, "Positive Percentage: " 
-						+ null, "Total Messages", JOptionPane.INFORMATION_MESSAGE);
+						+ MessageService.getInstance().accept(positivePercentage) + "%", "Total Messages", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		rightBtmPanel.add(postivePercentBtn);

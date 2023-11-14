@@ -3,21 +3,20 @@ import java.util.ArrayList;
 public class Group {
 	private String name;
 	
-	private static ArrayList<Group> groupList = new ArrayList<Group>();
-	
 	public Group(String name) {
-		this.name = name;
+		this.name = "GROUP:" + name;
+		addGroup(this);
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public static void add(Group group) {
-		groupList.add(group);
+	public static void addGroup(Group group) {
+		MessageService.getInstance().addGroup(group);
 	}
 	
 	public static ArrayList<Group> getGroups() {
-		return groupList;
+		return MessageService.getInstance().getGroups();
 	}
 }
