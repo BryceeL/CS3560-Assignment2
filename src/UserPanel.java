@@ -16,14 +16,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 public class UserPanel extends JFrame {
+	//ui components
 	private JPanel leftPanel;
 	private JPanel rightPanel;
+	
+	//vars
+	DefaultListModel<String> listModel = new DefaultListModel<>();
+	Dimension panelSize = new Dimension(318, 240);
+	Dimension scrollSize = new Dimension(260, 300);
 	
 	public UserPanel(User user) {
 		//frame
 		this.setTitle("User Panel: " + user.getUsername());
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setSize(750, 480);
+		this.setSize(650, 430);
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		this.setVisible(true);
@@ -31,7 +37,7 @@ public class UserPanel extends JFrame {
 		//left panel
 		leftPanel = new JPanel();
 		leftPanel.setBackground(Color.LIGHT_GRAY);
-		leftPanel.setPreferredSize(new Dimension(370, 240));
+		leftPanel.setPreferredSize(panelSize);
 
 		this.add(leftPanel, BorderLayout.WEST);
 		
@@ -40,13 +46,13 @@ public class UserPanel extends JFrame {
 		//right panel
 		rightPanel = new JPanel();
 		rightPanel.setBackground(Color.LIGHT_GRAY);
-		rightPanel.setPreferredSize(new Dimension(370, 240));
+		rightPanel.setPreferredSize(panelSize);
 		this.add(rightPanel, BorderLayout.EAST);
 		
 		createRightSection(user);
 	}
 	
-	//-----------function to follow another user and see list of your followers-----------
+	//-----------function to follow another user and see list of who you follow-----------
 	private void createLeftSection(User user) {
 		JTextField followUserText = new JTextField(10);
 		followUserText.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -64,42 +70,44 @@ public class UserPanel extends JFrame {
 					JOptionPane.showMessageDialog(null, "Unable to follow " 
 								+ followUserText.getText(), "Error with Follow", JOptionPane.ERROR_MESSAGE);
 				} else {
-					JOptionPane.showMessageDialog(null, "Successfully followed " 
-							+ followUserText.getText(), "Followed", JOptionPane.PLAIN_MESSAGE);
 					followUserText.setText("");
+					//refresh following list
+					listModel.clear();
+					for(User following : user.getFollowingList()) {
+						listModel.addElement("- " + following.getUsername());
+					}
 				}
 			}
 			
 		});
 		leftPanel.add(followUserBtn);
 		
-		JLabel label = new JLabel(user.getUsername() + "'s Followers:");
+		JLabel label = new JLabel(user.getUsername() + " is Following:");
 		label.setFont(new Font("Arial", Font.BOLD, 20));
 		leftPanel.add(label);
 		
-		DefaultListModel<String> listModel = new DefaultListModel<>();
-		for(User follower : user.getFollowers()) {
-			listModel.addElement("- " + follower.getUsername());
+		for(User following : user.getFollowingList()) {
+			listModel.addElement("- " + following.getUsername());
 		}
 		JList<String> followUserList = new JList<>(listModel);
 		followUserList.setFont(new Font("Arial", Font.PLAIN, 15));
 		JScrollPane scroll = new JScrollPane(followUserList);
-		scroll.setPreferredSize(new Dimension(300,350));
+		scroll.setPreferredSize(new Dimension(scrollSize));
 		leftPanel.add(scroll);
 		
-		//button to refresh news feed
-		JButton refreshBtn = new JButton("Refresh Followers");
-		refreshBtn.setPreferredSize(new Dimension(150, 20));
-		refreshBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				listModel.clear();
-				for(User follower : user.getFollowers()) {
-					listModel.addElement("- " + follower.getUsername());
-				}
-			}
-		});
-		leftPanel.add(refreshBtn);
+		//button to refresh followers
+//		JButton refreshBtn = new JButton("Refresh Followers");
+//		refreshBtn.setPreferredSize(new Dimension(150, 20));
+//		refreshBtn.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				// TODO Auto-generated method stub
+//				listModel.clear();
+//				for(User follower : user.getFollowers()) {
+//					listModel.addElement("- " + follower.getUsername());
+//				}
+//			}
+//		});
+//		leftPanel.add(refreshBtn);
 	}
 	
 	//-----------function post message and see list of posts sent from followings-----------
@@ -137,7 +145,7 @@ public class UserPanel extends JFrame {
 		JList<String> newsList = new JList<>(listModel);
 		newsList.setFont(new Font("Arial", Font.PLAIN, 15));
 		JScrollPane scroll = new JScrollPane(newsList);
-		scroll.setPreferredSize(new Dimension(300,350));
+		scroll.setPreferredSize(new Dimension(scrollSize));
 		rightPanel.add(scroll);
 		
 //		JLabel userLabel = new JLabel("("+user.toString()+")");

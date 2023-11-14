@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-
+//singleton & visitable
 public class MessageService implements Visitable {
 
 	//hash map with names as keys and its content as respective content

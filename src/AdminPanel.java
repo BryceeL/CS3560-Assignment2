@@ -27,21 +27,9 @@ public class AdminPanel extends JFrame {
 	private JTree tree;
 	
 	private JPanel rightPanel;
-	
 	private JPanel rightUpPanel;
-//	private JTextField userIdText;
-//	private JTextField groupIdText;
-//	private JButton userIdBtn;
-//	private JButton groupIdBtn;
-	
 	private JPanel rightMidPanel;
-//	private JButton openUserBtn;
-	
 	private JPanel rightBtmPanel;
-//	private JButton totalUsersBtn;
-//	private JButton totalGroupsBtn;
-//	private JButton totalMsgsBtn;
-//	private JButton postivePercentBtn;
 	
 	//variables
 	private DefaultMutableTreeNode selectedNode;
@@ -110,17 +98,17 @@ public class AdminPanel extends JFrame {
 		
 		DefaultMutableTreeNode RootNode = new DefaultMutableTreeNode("Root");
 		tree = new JTree(RootNode);
-		//tree.setPreferredSize(new Dimension(300,400));
+		tree.setFont(new Font("Arial", Font.PLAIN, 16));
 		
 		//--DEBUG!!!!
-		DefaultMutableTreeNode group = new DefaultMutableTreeNode(new Group("Brothers").getName());
-		RootNode.add(group);
-		User Auser = new User("Trey");
-		DefaultMutableTreeNode AuserNode = new DefaultMutableTreeNode(Auser.getUsername());
-		group.add(AuserNode);
-		User Buser = new User("Bryce");
-		DefaultMutableTreeNode BuserNode = new DefaultMutableTreeNode(Buser.getUsername());
-		group.add(BuserNode);
+//		DefaultMutableTreeNode group = new DefaultMutableTreeNode(new Group("Brothers").getName());
+//		RootNode.add(group);
+//		User Auser = new User("Trey");
+//		DefaultMutableTreeNode AuserNode = new DefaultMutableTreeNode(Auser.getUsername());
+//		group.add(AuserNode);
+//		User Buser = new User("Bryce");
+//		DefaultMutableTreeNode BuserNode = new DefaultMutableTreeNode(Buser.getUsername());
+//		group.add(BuserNode);
 		
 		//respond to selected node
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
@@ -130,11 +118,10 @@ public class AdminPanel extends JFrame {
 					selectedNode = node;
 					System.out.println("Selected Node: " + selectedNode);
 				}
-			}
-			
+			}	
 		});
 		JScrollPane scroll = new JScrollPane(tree);
-		scroll.setPreferredSize(new Dimension(300,400));
+		scroll.setPreferredSize(new Dimension(350,380));
 		leftPanel.add(scroll);
 	}
 	

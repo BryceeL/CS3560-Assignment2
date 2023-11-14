@@ -1,9 +1,9 @@
 import java.util.ArrayList;
-
+//observer and subject
 public class User extends Subject implements UserInterface {
 	//variables
 	private String userName;
-	
+	private ArrayList<User> followingList = new ArrayList<User>();
 	private ArrayList<String> newsFeed = new ArrayList<String>();
 	
 	public User(String userName) {
@@ -19,6 +19,10 @@ public class User extends Subject implements UserInterface {
 		return newsFeed;
 	}
 	
+	public ArrayList<User> getFollowingList() {
+		return followingList;
+	}
+	
 	//become observer of another user (subject)
 	public boolean followUser(String username) {
 		//could not find user
@@ -28,6 +32,7 @@ public class User extends Subject implements UserInterface {
 			return false;
 		} else {	
 			desiredUser.attach(this);
+			followingList.add(desiredUser);
 			return true;
 		}
 	}
