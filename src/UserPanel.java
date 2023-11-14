@@ -94,20 +94,6 @@ public class UserPanel extends JFrame {
 		JScrollPane scroll = new JScrollPane(followUserList);
 		scroll.setPreferredSize(new Dimension(scrollSize));
 		leftPanel.add(scroll);
-		
-		//button to refresh followers
-//		JButton refreshBtn = new JButton("Refresh Followers");
-//		refreshBtn.setPreferredSize(new Dimension(150, 20));
-//		refreshBtn.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				listModel.clear();
-//				for(User follower : user.getFollowers()) {
-//					listModel.addElement("- " + follower.getUsername());
-//				}
-//			}
-//		});
-//		leftPanel.add(refreshBtn);
 	}
 	
 	//-----------function post message and see list of posts sent from followings-----------
