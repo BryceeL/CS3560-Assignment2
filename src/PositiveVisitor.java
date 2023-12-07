@@ -6,8 +6,8 @@ public class PositiveVisitor implements Visitor{
 			"love", "good", "great", "excellent"};
 	MessagesVisitor totalMessages = new MessagesVisitor();
 	
-	public int visit(MessageService instance) {
-		int messagesCount = MessageService.getInstance().accept(totalMessages);
+	public String visit(MessageService instance) {
+		int messagesCount = Integer.parseInt(MessageService.getInstance().accept(totalMessages));
 		double positveCount = 0;
 		Object[] userObjs = instance.getUsers().toArray();
 		ArrayList<User> users = new ArrayList<User>();
@@ -31,7 +31,7 @@ public class PositiveVisitor implements Visitor{
 				}
 			}
 		}
-		return (int) (positveCount/messagesCount * 100);
+		return Integer.toString((int) (positveCount/messagesCount * 100));
 	}
 
 }

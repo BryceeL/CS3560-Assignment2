@@ -3,6 +3,8 @@ import java.util.ArrayList;
 public class User extends Subject implements UserInterface {
 	//variables
 	private String userName;
+	private long creationTime = System.currentTimeMillis();
+	private long lastUpdateTime = System.currentTimeMillis();
 	private ArrayList<User> followingList = new ArrayList<User>();
 	private ArrayList<String> newsFeed = new ArrayList<String>();
 	
@@ -13,6 +15,14 @@ public class User extends Subject implements UserInterface {
 	
 	public String getUsername() {
 		return userName;
+	}
+	
+	public long getCreationTime() {
+		return creationTime;
+	}
+	
+	public long getLastUpdateTime() {
+		return lastUpdateTime;
 	}
 
 	public ArrayList<String> getNewsFeed() {
@@ -39,10 +49,11 @@ public class User extends Subject implements UserInterface {
 
 	public boolean post(String message) {
 		MessageService.getInstance().saveMessage(this, message);
+		lastUpdateTime = System.currentTimeMillis();
 		notifyFollowers();
 		return true;
 	}
-
+	
 	//update the followers
 	public void update(Subject sub) {
 		if(sub instanceof User)
@@ -55,6 +66,7 @@ public class User extends Subject implements UserInterface {
 			for(String msg : subMessages) {
 				if(newsFeed.indexOf(subject.getUsername() + ": "+ msg) == -1 || newsFeed.size() == 0) { //PROBLEM, NOT CHECKING DUPLICATES??
 					newsFeed.add(subject.getUsername() + ": " + msg);
+					lastUpdateTime = System.currentTimeMillis();
 					System.out.println(userName + " received " + subject.getUsername() + 
 							"'s message: " + msg);
 				}

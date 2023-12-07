@@ -1,7 +1,7 @@
 
 public class UsersVisitor implements Visitor {
 	//visitor gets total amount of users from instance
-	public int visit(MessageService instance) {
-		return instance.getUsers().size();
+	public String visit(MessageService instance) {
+		return Integer.toString(instance.getUsers().size());
 	}
 }

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class MessagesVisitor implements Visitor {
-	public int visit(MessageService instance) {
+	public String visit(MessageService instance) {
 		int messageCount = 0;
 		Object[] userObjs = instance.getUsers().toArray();
 		ArrayList<User> users = new ArrayList<User>();
@@ -17,7 +17,7 @@ public class MessagesVisitor implements Visitor {
 				messageCount += 1;
 			}
 		}
-		return messageCount;
+		return Integer.toString(messageCount);
 	}
 
 }

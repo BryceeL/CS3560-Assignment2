@@ -33,6 +33,8 @@ public class AdminPanel extends JFrame {
 	
 	//variables
 	private DefaultMutableTreeNode selectedNode;
+	private int valid = 1;
+	private String lastUpdatedUserName;
 	
 	public AdminPanel() {
 		//frame
@@ -63,11 +65,10 @@ public class AdminPanel extends JFrame {
 		rightPanel.setPreferredSize(new Dimension(400, 0));
 		this.add(rightPanel, BorderLayout.EAST);
 		
-		Dimension rightPanelSize = new Dimension(400, 140);
 		//right UP Panel
 		rightUpPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
 		rightUpPanel.setBackground(Color.GRAY);
-		rightUpPanel.setPreferredSize(rightPanelSize);
+		rightUpPanel.setPreferredSize(new Dimension(400, 140));
 		rightPanel.add(rightUpPanel);
 		
 		createIdSection();
@@ -75,7 +76,7 @@ public class AdminPanel extends JFrame {
 		//right MID Panel
 		rightMidPanel = new JPanel();
 		rightMidPanel.setBackground(Color.GRAY);
-		rightMidPanel.setPreferredSize(rightPanelSize);
+		rightMidPanel.setPreferredSize(new Dimension(400, 100));
 		rightPanel.add(rightMidPanel);
 		
 		createUserViewSection();
@@ -83,7 +84,7 @@ public class AdminPanel extends JFrame {
 		//right BOTTOM Panel
 		rightBtmPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
 		rightBtmPanel.setBackground(Color.GRAY);
-		rightBtmPanel.setPreferredSize(rightPanelSize);
+		rightBtmPanel.setPreferredSize(new Dimension(400, 190));
 		rightPanel.add(rightBtmPanel);
 		
 		createStatSection();
@@ -139,6 +140,7 @@ public class AdminPanel extends JFrame {
 						//text field cannot be blank or adding an existing user
 						if(!userInput.equals("") && MessageService.getInstance().getUser(userInput) == null) {
 							User user = new User(userIdText.getText());
+							System.out.println(user.getUsername() + "'s creation: " + user.getCreationTime());
 							DefaultMutableTreeNode userNode = new DefaultMutableTreeNode(user.getUsername());
 							selectedNode.add(userNode);
 							userIdText.setText("");
@@ -177,7 +179,9 @@ public class AdminPanel extends JFrame {
 					if(selectedNode.getUserObject().toString().contains("GROUP:") || 
 							selectedNode.getUserObject().toString().equals("Root")) {
 						if(!groupIdText.getText().trim().equals("")) {
-							DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode(new Group(groupIdText.getText()).getName());		
+							Group group = new Group(groupIdText.getText());
+							System.out.println(group.getName() + "'s creation time: " + group.getCreationTime());
+							DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode(group.getName());		
 							selectedNode.add(groupNode);
 							groupIdText.setText("");
 							((DefaultTreeModel) tree.getModel()).reload();
@@ -228,10 +232,13 @@ public class AdminPanel extends JFrame {
 	
 	//-----------create buttons to view statistics on right bottom of frame-----------
 	private void createStatSection() {
+		//visitors for each function
 		UsersVisitor totalUsers = new UsersVisitor();
 		GroupVisitor totalGroups = new GroupVisitor();
 		MessagesVisitor totalMessages = new MessagesVisitor();
 		PositiveVisitor positivePercentage = new PositiveVisitor();
+		ValidateVisitor validate = new ValidateVisitor();
+		LastUpdatedVisitor lastUpdated = new LastUpdatedVisitor();
 		
 		Dimension btnSize = new Dimension(160, 40);
 		
@@ -283,5 +290,40 @@ public class AdminPanel extends JFrame {
 			}
 		});
 		rightBtmPanel.add(postivePercentBtn);
+		
+		//validiate users/groups (no duplicates and no spaces)
+		JButton validateBtn = new JButton("<html>Validiate<br>Users/Groups</html>");
+		validateBtn.setPreferredSize(btnSize);
+		validateBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				valid = Integer.parseInt(MessageService.getInstance().accept(validate));
+				if (valid == 0) {
+					JOptionPane.showMessageDialog(null, "At least one name of a user or group is invalid.", 
+							"Validiation Notice", JOptionPane.WARNING_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "All the names of the user and group are valid.", 
+							"Validiation Notice", JOptionPane.INFORMATION_MESSAGE);
+				}			
+			}
+		});
+		rightBtmPanel.add(validateBtn);
+		
+		//get last updated user who posted the latest message
+		JButton latestBtn = new JButton("<html>Get User with<br>latest message</html>");
+		latestBtn.setPreferredSize(btnSize);
+		latestBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lastUpdatedUserName = MessageService.getInstance().accept(lastUpdated);
+				if (lastUpdatedUserName != null) {
+					JOptionPane.showMessageDialog(null, "Last user to post was " + lastUpdatedUserName, 
+							"Last Updated User", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "No user had posted yet.", 
+							"No Last Updated User", JOptionPane.INFORMATION_MESSAGE);
+				}			
+			}
+		});
+		rightBtmPanel.add(latestBtn);
 	}
 }

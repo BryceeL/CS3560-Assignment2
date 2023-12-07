@@ -8,6 +8,7 @@ public class MessageService implements Visitable {
 	private static HashMap<User, ArrayList<String>> hashmap = new HashMap<User, ArrayList<String>>();
 	private static ArrayList<Group> groupList = new ArrayList<Group>();
 	private static MessageService instance;
+	private User lastPostUser;
 	
 	private MessageService() {};
 	
@@ -32,6 +33,12 @@ public class MessageService implements Visitable {
 	//save user's message to its array of messages
 	public void saveMessage(User user, String message) {
 		getMessages(user).add(message);
+		lastPostUser = user;
+	}
+	
+	//get user that last posted
+	public User getLastPostedUser() {
+		return lastPostUser;
 	}
 	
 	//add user to hashmap 
@@ -60,7 +67,7 @@ public class MessageService implements Visitable {
 	}
 
 	//accepts visitors
-	public int accept(Visitor visitor) {
+	public String accept(Visitor visitor) {
 		return visitor.visit(this);
 	}
 }

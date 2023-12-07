@@ -1,4 +1,4 @@
 public interface Visitor {
 	
-	public int visit(MessageService instance);
+	public String visit(MessageService instance);
 }

@@ -1,7 +1,7 @@
 
 public class GroupVisitor implements Visitor{
-	public int visit(MessageService instance) {
-		return instance.getGroups().size();
+	public String visit(MessageService instance) {
+		return Integer.toString(instance.getGroups().size());
 	}
 
 }

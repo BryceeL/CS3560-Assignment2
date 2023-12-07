@@ -1,4 +1,4 @@
 
 public interface Visitable {
-	public int accept(Visitor visitor);
+	public String accept(Visitor visitor);
 }

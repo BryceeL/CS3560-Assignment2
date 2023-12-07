@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -19,6 +21,8 @@ public class UserPanel extends JFrame {
 	//ui components
 	private JPanel leftPanel;
 	private JPanel rightPanel;
+	
+	private JLabel lastUpdateLabel;
 	
 	//vars
 	DefaultListModel<String> listModel = new DefaultListModel<>();
@@ -89,11 +93,20 @@ public class UserPanel extends JFrame {
 		for(User following : user.getFollowingList()) {
 			listModel.addElement("- " + following.getUsername());
 		}
+		
 		JList<String> followUserList = new JList<>(listModel);
 		followUserList.setFont(new Font("Arial", Font.PLAIN, 15));
 		JScrollPane scroll = new JScrollPane(followUserList);
 		scroll.setPreferredSize(new Dimension(scrollSize));
 		leftPanel.add(scroll);
+		
+		JLabel creationLabel = new JLabel("Creation Time: " + formatTime(user.getCreationTime()));
+		creationLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+		leftPanel.add(creationLabel);
+		
+		lastUpdateLabel = new JLabel("Last Updated: " + formatTime(user.getLastUpdateTime()));
+		lastUpdateLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+		leftPanel.add(lastUpdateLabel);
 	}
 	
 	//-----------function post message and see list of posts sent from followings-----------
@@ -110,6 +123,7 @@ public class UserPanel extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				if( user.post(messageText.getText()) && !(messageText.getText().trim().equals(""))) {
+					updateLastUpdateTime(user);
 					JOptionPane.showMessageDialog(null, "Successfully posted your message", "Posted", JOptionPane.PLAIN_MESSAGE);
 					messageText.setText("");
 				} else {
@@ -142,7 +156,7 @@ public class UserPanel extends JFrame {
 		refreshBtn.setPreferredSize(new Dimension(150, 20));
 		refreshBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				updateLastUpdateTime(user);
 				listModel.clear();
 				for(String message : user.getNewsFeed()) {
 					listModel.addElement("- " + message);
@@ -150,5 +164,16 @@ public class UserPanel extends JFrame {
 			}
 		});
 		rightPanel.add(refreshBtn);
+	}
+	
+	//returns system time in the appropiate time format
+	private String formatTime(long currentTime) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+		Date date = new Date(currentTime);
+		return dateFormat.format(date);
+	}
+	
+	private void updateLastUpdateTime(User user) {
+		lastUpdateLabel.setText("Last Updated: " + formatTime(user.getLastUpdateTime()));
 	}
 }

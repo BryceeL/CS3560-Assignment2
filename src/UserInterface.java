@@ -4,6 +4,10 @@ public interface UserInterface {
 
 	public String getUsername();
 	
+	public long getCreationTime();
+	
+	public long getLastUpdateTime();
+	
 	public ArrayList<String> getNewsFeed();
 	
 	public boolean followUser(String username);
